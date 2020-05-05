@@ -20,7 +20,7 @@ module.exports = function(grunt) {
                 dest: "src/js/script.js"
             }
         },
-        uglify: {
+        terser: {
             background: {
                 src: "src/js/background.js",
                 dest: "bin/js/background.js"
@@ -76,9 +76,14 @@ module.exports = function(grunt) {
             }
         },
         exec: {
+
             vulcanize: {
-                command: "vulcanize -p \"src/\" /view/timer.html --inline-script --inline-css | crisper --html bin/view/timer.html --js bin/view/timer.js"
+                command: "vulcanize -p \"src/\" /view/timer.html --inline-scripts --inline-css | crisper --html bin/view/timer.html --js bin/view/timer.js"
+            },
+            bundler: {
+                command: "polymer-bundler -r \"src/\" /view/timer.html --inline-scripts --inline-css | crisper --html bin/view/timer.html --js bin/view/timer.js"
             }
+            
         },
         "json-minify": {
             manifest: {
@@ -94,46 +99,37 @@ module.exports = function(grunt) {
                     "bin/view/timer.html": "bin/view/timer.html"
                 }
             }
-        },
-        nwjs: {
-            options: {
-                platforms: ["win", "osx", "linux"],
-                buildDir: "nwjs" // Where the build version of my NW.js app is saved
-            },
-            src: ["bin"] // Your NW.js app
         }
     });
 
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-contrib-concat");
-    grunt.loadNpmTasks("grunt-contrib-uglify");
+    grunt.loadNpmTasks("grunt-terser");
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks("grunt-json-minify");
     grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-exec");
     grunt.loadNpmTasks("grunt-minify-html");
-    grunt.loadNpmTasks("grunt-nw-builder");
-
+    
     // Default task.
     grunt.registerTask("default", ["build"]);
-
-    grunt.registerTask("build-nwjs", ["build", "nwjs"]);
 
     grunt.registerTask("build", [
         "clean:build",
         "concat:script",
-        "uglify:script",
-        "uglify:background",
+        "terser:script",
+        "terser:background",
         "copy:manifest",
         "copy:audio",
         "copy:meta",
         "copy:locales",
-        "copy:view",
-        "exec:vulcanize",
+        "copy:view", //for make directory bin/view
+        //"exec:vulcanize",
+        "exec:bundler",
         "clean:js",
         "minifyHtml:timer",
-        "uglify:timer",
+        "terser:timer",
         "json-minify:manifest"
     ]);
 };
