@@ -186,19 +186,24 @@ API.dom = (function() {
     }
 
     // Gets the settings section
+    // works after initSettings call
     function getSettings() {
         return document.getElementById("timedoser-settings");
     }
 
     // Sets up the settings section
     function initSettings() {
+
+        if ( !getSettings() ){
+            var template = document.getElementById("timedoser-settings-template");
+            getTimerContainer().appendChild( template.content );
+        }
+
         var settings = getSettings();
-        getTimerContainer().appendChild(settings);
         var sliderDivs = settings.querySelectorAll(".slider-setting");
         var switches = settings.querySelectorAll("paper-toggle-button");
         var time, slider;
         var back = settings.querySelector(".back-button");
-
         var elements = settings.querySelectorAll("paper-slider,paper-toggle-button,paper-icon-button");
         elements = Array.prototype.slice.call(elements);
 
@@ -207,17 +212,20 @@ API.dom = (function() {
         back.addEventListener("click", closeSettings);
 
         API.storage.settings.getAll().then(function(settings) {
+
             var i;
             for (i = 0; i < sliderDivs.length; i++) {
                 time = sliderDivs[i].querySelector(".time");
                 slider = sliderDivs[i].querySelector("paper-slider");
                 if (settings[slider.name]) {
                     slider.value = settings[slider.name];
+                    time.textContent = slider.value;
                 }
                 slider.setAttribute("last-value", slider.value);
                 slider.addEventListener("immediate-value-change", updateSlider);
                 slider.addEventListener("change", updateSlider);
             }
+
             for (i = 0; i < switches.length; i++) {
                 if (settings[switches[i].getAttribute("name")]) {
                     switches[i].checked = settings[switches[i].getAttribute("name")];
@@ -265,8 +273,9 @@ API.dom = (function() {
                 icon: "av:play-arrow"
             },
             callback: function() {
-                getSettings().classList.add("on");
-                var elements = getSettings().querySelectorAll("paper-slider,paper-toggle-button,paper-icon-button");
+                var settings = getSettings();
+                settings.classList.add("on");
+                var elements = settings.querySelectorAll("paper-slider,paper-toggle-button,paper-icon-button");
                 elements = Array.prototype.slice.call(elements);
                 var allElements = document.querySelectorAll("paper-slider,paper-toggle-button,paper-icon-button,paper-fab");
                 allElements = Array.prototype.slice.call(allElements);
@@ -300,12 +309,14 @@ API.dom = (function() {
                         API.window.resize("standard");
                     }
                 });
-                var elements = getSettings().querySelectorAll("paper-slider,paper-toggle-button,paper-icon-button");
+                var settings = getSettings();
+                if (!settings) return console.log( "dom.closeSettings: getSettings() is null", settings );
+                var elements = settings.querySelectorAll("paper-slider,paper-toggle-button,paper-icon-button");
                 elements = Array.prototype.slice.call(elements);
                 var allElements = document.querySelectorAll("paper-slider,paper-toggle-button,paper-icon-button,paper-fab");
                 allElements = Array.prototype.slice.call(allElements);
                 disableElement(allElements, true, elements);
-                getSettings().classList.remove("on");
+                settings.classList.remove("on");
                 getTimerContainer().style.height = "";
             }
         }, target);
