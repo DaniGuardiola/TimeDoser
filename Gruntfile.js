@@ -6,28 +6,12 @@ module.exports = function(grunt) {
         clean: {
             build: {
                 src: ["bin/"]
-            },
-            js: {
-                src: ["src/js/script.js"]
-            }
-        },
-        concat: {
-            script: {
-                src: [
-                    "src/js/app.js",
-                    "src/js/module/*.js"
-                ],
-                dest: "src/js/script.js"
             }
         },
         terser: {
             background: {
                 src: "src/js/background.js",
                 dest: "bin/js/background.js"
-            },
-            script: {
-                src: "src/js/script.js",
-                dest: "src/js/script.js"
             },
             timer: {
                 src: "bin/view/timer.js",
@@ -68,6 +52,11 @@ module.exports = function(grunt) {
                 src: "**",
                 dest: "bin/_locales"
             },
+            fonts: {
+                src: "src/bower_components/font-roboto/fonts/roboto/Roboto-Regular.ttf",
+                dest: "bin/bower_components/font-roboto/fonts/roboto/Roboto-Regular.ttf"
+            },
+
             view: {
                 expand: true,
                 cwd: "src/view",
@@ -77,9 +66,6 @@ module.exports = function(grunt) {
         },
         exec: {
 
-            vulcanize: {
-                command: "vulcanize -p \"src/\" /view/timer.html --inline-scripts --inline-css | crisper --html bin/view/timer.html --js bin/view/timer.js"
-            },
             bundler: {
                 command: "polymer-bundler -r \"src/\" /view/timer.html --inline-scripts --inline-css | crisper --html bin/view/timer.html --js bin/view/timer.js"
             }
@@ -104,7 +90,6 @@ module.exports = function(grunt) {
 
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks("grunt-contrib-clean");
-    grunt.loadNpmTasks("grunt-contrib-concat");
     grunt.loadNpmTasks("grunt-terser");
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks("grunt-json-minify");
@@ -117,17 +102,14 @@ module.exports = function(grunt) {
 
     grunt.registerTask("build", [
         "clean:build",
-        "concat:script",
-        "terser:script",
         "terser:background",
         "copy:manifest",
         "copy:audio",
+        "copy:fonts",
         "copy:meta",
         "copy:locales",
-        "copy:view", //for make directory bin/view
-        //"exec:vulcanize",
+        "copy:view", // it's little hack to create directory bin/view
         "exec:bundler",
-        "clean:js",
         "minifyHtml:timer",
         "terser:timer",
         "json-minify:manifest"
