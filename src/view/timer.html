@@ -21,12 +21,8 @@
     <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
     <link rel="import" href="/bower_components/paper-tooltip/paper-tooltip.html">
 
-    <!--Prod ( this file will be created by grunt )-->
-    <script src="/js/script.js"></script>
 
-    <!-- Or Debug -->
-
-    <!--script src="/js/app.js"></script>
+    <script src="/js/app.js"></script>
     <script src="/js/module/commands.js"></script>
     <script src="/js/module/dom.js"></script>
     <script src="/js/module/storage.js"></script>
@@ -36,7 +32,8 @@
     <script src="/js/module/window.js"></script>
     <script src="/js/module/tour.js"></script>
     <script src="/js/module/notifications.js"></script>
-    <script src="/js/module/blocker.js"></script-->
+    <script src="/js/module/blocker.js"></script>
+
 
     <link rel="import" href="/css/style.html">
     <!-- Components styles -->
@@ -49,7 +46,7 @@
     <audio id="audio-break">
         <source src="/audio/break.mp3" type="audio/mpeg">
     </audio>
-    <template is="dom-bind">
+    <template id="timedoser-settings-template" is="dom-bind">
         <div id="timedoser-settings" class="vertical-section">
             <div class="header title center horizontal layout">
                 <paper-icon-button i18nTitle="24" class="back-button" icon="arrow-back"></paper-icon-button>
